@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:conv="clr-namespace:MI_Cars.Services"
+    x:Class="MI_Cars.Views.MainPage"
+    x:Name="PageRoot"
+    Title="MI-Cars CRM"
+    BackgroundColor="#FFFFFFFF">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:DateColorConverter x:Key="DateColorConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid Padding="10" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!--Кнопки Меню-->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" VerticalOptions="Start">
+            <Button Text="Перейти к авто" Clicked="OnGoToCarsClicked"/>
+            <Button Text="Перейти к аренде" Clicked="OnGoToRentalsClicked"/>
+        </HorizontalStackLayout>
+
+        <!--ЫААА Сортировка-->
+        <HorizontalStackLayout Grid.Row="1" Spacing="10" Margin="0,6,0,6" VerticalOptions="Center" HorizontalOptions="Fill">
+            <!--Выпадающее меню МЕСЯЦ-->
+            <Frame Padding="0" VerticalOptions="Center" HorizontalOptions="FillAndExpand"
+                   CornerRadius="5" BackgroundColor="#FFFFFFFF" BorderColor="Black">
+                <Picker ItemsSource="{Binding Months}" SelectedItem="{Binding SelectedMonth}" 
+                        FontSize="{OnPlatform Android=16, iOS=16, WinUI=14}" />
+            </Frame>
+
+            <!--Выпалающее меню ГОД-->
+            <Frame Padding="0" VerticalOptions="Center" HorizontalOptions="FillAndExpand"
+                   CornerRadius="5" BackgroundColor="#FFFFFFFF" BorderColor="Black">
+                <Picker ItemsSource="{Binding Years}" SelectedItem="{Binding SelectedYear}" 
+                        FontSize="{OnPlatform Android=16, iOS=16, WinUI=14}" />
+            </Frame>
+
+            <!--Выпадающее меню по МАРКЕ авто-->
+            <Frame Padding="0" VerticalOptions="Center" HorizontalOptions="FillAndExpand"
+                   CornerRadius="5" BackgroundColor="#FFFFFFFF" BorderColor="Black">
+                <Picker ItemsSource="{Binding AvailableBrandsWithAll}" SelectedItem="{Binding SelectedBrand}" 
+                        FontSize="{OnPlatform Android=16, iOS=16, WinUI=14}" />
+            </Frame>
+
+            <!--Поиск по ГосНомеру-->
+            <Entry Placeholder="Поиск по ГОС номеру" Text="{Binding SearchPlateNumber}"
+                   HeightRequest="50"
+                   FontSize="{OnPlatform Android=16, iOS=16, WinUI=14}"
+                   VerticalOptions="Center" HorizontalOptions="FillAndExpand"/>
+        </HorizontalStackLayout>
+
+        <!-- Заголовки Таблицы-->
+        <Grid Grid.Row="2" Padding="6" ColumnSpacing="6" BackgroundColor="#FFFFFFFF">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Grid.Column="0" Text="Марка" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+            <Label Grid.Column="1" Text="Модель" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+            <Label Grid.Column="2" Text="Гос. номер" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+            <Label Grid.Column="3" Text="Цвет" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+            <Label Grid.Column="4" Text="Дни (выбранный месяц)" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+        </Grid>
+
+        <!--Основной Список-->
+        <CollectionView Grid.Row="3" ItemsSource="{Binding FilteredCars}" SelectionMode="None"
+                        VerticalOptions="FillAndExpand" Margin="0,0,0,10">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="6" Margin="0,0,0,8" CornerRadius="6" BorderColor="Black" HasShadow="False" BackgroundColor="#FFFFFFFF"
+                           MinimumHeightRequest="{OnPlatform Android=70, iOS=70, WinUI=60}">
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="90"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--Инфо Авто-->
+                            <!--Марка-->
+                            <Label Grid.Column="0" Text="{Binding Brand}" VerticalTextAlignment="Center" TextColor="Black"/>
+                            <!--Модель-->
+                            <Label Grid.Column="1" Text="{Binding Model}" VerticalTextAlignment="Center" TextColor="Black"/>
+                            <!--ГосНомер-->
+                            <Label Grid.Column="2" Text="{Binding PlateNumber}" VerticalTextAlignment="Center" TextColor="Black"/>
+                            <!--Колонка-->
+                            <Label Grid.Column="3" Text="{Binding Color}" VerticalTextAlignment="Center" TextColor="Black"/>
+
+                            <!--Строка Дат-->
+                            <ScrollView Grid.Column="4" Orientation="Horizontal" HorizontalScrollBarVisibility="Always">
+                                <HorizontalStackLayout Spacing="4" Padding="2" BindableLayout.ItemsSource="{Binding DatesForCar}">
+                                    <BindableLayout.ItemTemplate>
+                                        <DataTemplate>
+                                            <Frame Padding="0" CornerRadius="4" HasShadow="False" BorderColor="Transparent">
+                                                <Frame.GestureRecognizers>
+                                                    <TapGestureRecognizer
+                                                        Command="{Binding BindingContext.DateClickedCommand, Source={x:Reference PageRoot}}"
+                                                        CommandParameter="{Binding .}" />
+                                                </Frame.GestureRecognizers>
+                                                <Grid WidthRequest="36" HeightRequest="36">
+                                                    <Label Text="{Binding Date, StringFormat='{0:dd}'}"
+                                                           HorizontalTextAlignment="Center"
+                                                           VerticalTextAlignment="Center"
+                                                           FontSize="{OnPlatform Android=14, iOS=14, WinUI=12}"
+                                                           TextColor="White"
+                                                           BackgroundColor="{Binding Status, Converter={StaticResource DateColorConverter}}"
+                                                           HorizontalOptions="FillAndExpand"
+                                                           VerticalOptions="FillAndExpand"/>
+                                                </Grid>
+                                            </Frame>
+                                        </DataTemplate>
+                                    </BindableLayout.ItemTemplate>
+                                </HorizontalStackLayout>
+                            </ScrollView>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

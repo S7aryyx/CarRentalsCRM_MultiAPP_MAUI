@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MI_Cars.ViewModels"
+             x:Class="MI_Cars.Views.CarsPage"
+             x:Name="CarsPageRoot"
+             Title="Автомобили"
+             BackgroundColor="#FFFFFFFF">
+
+    <ContentPage.BindingContext>
+        <vm:CarsViewModel/>
+    </ContentPage.BindingContext>
+
+    <Grid Padding="10" RowSpacing="5">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Верхние кнопки -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" VerticalOptions="Start">
+            <Button Text="Загрузить авто" Command="{Binding LoadCarsCommand}" BackgroundColor="#2196F3" TextColor="White"/>
+            <Button Text="Добавить авто" Command="{Binding AddCarCommand}" BackgroundColor="#4CAF50" TextColor="White"/>
+        </HorizontalStackLayout>
+
+        <!-- Удаление по госномеру -->
+        <HorizontalStackLayout Grid.Row="1" Spacing="10" VerticalOptions="Center" Margin="0,4,0,4">
+            <Entry Placeholder="Введите ГосНомер для удаления" 
+                   Text="{Binding PlateToDelete}" 
+                   HorizontalOptions="FillAndExpand"
+                   HeightRequest="40"
+                   FontSize="14"
+                   BackgroundColor="#FFFFFFFF"
+                   TextColor="Black"/>
+            <Button Text="Удалить" 
+                    Command="{Binding DeleteCarByPlateCommand}" 
+                    BackgroundColor="#F44336" TextColor="White"/>
+        </HorizontalStackLayout>
+
+        <!-- Таблица машин -->
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Cars}" SelectionMode="None">
+            <CollectionView.Header>
+                <Grid Padding="4" ColumnSpacing="4" BackgroundColor="#FFFFFFFF">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Text="Марка" FontAttributes="Bold" HorizontalTextAlignment="Start" TextColor="Black"/>
+                    <Label Grid.Column="1" Text="Модель" FontAttributes="Bold" HorizontalTextAlignment="Start" TextColor="Black"/>
+                    <Label Grid.Column="2" Text="ГосНомер" FontAttributes="Bold" HorizontalTextAlignment="Start" TextColor="Black"/>
+                    <Label Grid.Column="3" Text="Цвет" FontAttributes="Bold" HorizontalTextAlignment="Start" TextColor="Black"/>
+                    <Label Grid.Column="4" Text="" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="Black"/>
+                </Grid>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Spacing="0">
+                        <Frame Padding="4" Margin="0,0,0,0" CornerRadius="4" BorderColor="Black" HasShadow="False" BackgroundColor="#FFFFFFFF"
+                               MinimumHeightRequest="50">
+                            <Grid ColumnSpacing="4" VerticalOptions="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Grid.Column="0" Text="{Binding Brand}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" TextColor="Black"/>
+                                <Label Grid.Column="1" Text="{Binding Model}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" TextColor="Black"/>
+                                <Label Grid.Column="2" Text="{Binding PlateNumber}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" TextColor="Black"/>
+                                <Label Grid.Column="3" Text="{Binding Color}" VerticalTextAlignment="Center" HorizontalTextAlignment="Start" TextColor="Black"/>
+
+                                <Button Grid.Column="4" Text="Удалить" 
+                                        BackgroundColor="#F44336" TextColor="White"
+                                        Command="{Binding BindingContext.DeleteCarCommand, Source={x:Reference CarsPageRoot}}"
+                                        CommandParameter="{Binding PlateNumber}"/>
+                            </Grid>
+                        </Frame>
+
+                        <!-- Тонкая линия между строками -->
+                        <BoxView HeightRequest="1" BackgroundColor="Gray" HorizontalOptions="Fill"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,31 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:MI_Cars.ViewModels"
+             x:Class="MI_Cars.Views.RentalsPage"
+             Title="Аренды">
+
+    <ContentPage.BindingContext>
+        <vm:RentalsViewModel/>
+    </ContentPage.BindingContext>
+
+    <StackLayout Padding="10">
+        <Label Text="Список аренд" FontAttributes="Bold" FontSize="20"/>
+
+        <CollectionView ItemsSource="{Binding Rentals}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="10" Margin="5" BorderColor="Gray" CornerRadius="5">
+                        <StackLayout>
+                            <Label Text="{Binding Client.FullName}" FontAttributes="Bold"/>
+                            <Label Text="{Binding Client.Phone}" FontSize="14"/>
+                            <Label Text="{Binding StartDate, StringFormat='Начало: {0:dd.MM.yyyy HH:mm}'}"/>
+                            <Label Text="{Binding EndDate, StringFormat='Конец: {0:dd.MM.yyyy HH:mm}'}"/>
+                            <Label Text="{Binding DailyRate, StringFormat='Цена в день: {0:C}'}"/>
+                            <Label Text="{Binding TotalAmount, StringFormat='Итого: {0:C}'}" FontAttributes="Bold"/>
+                        </StackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </StackLayout>
+</ContentPage>
